@@ -4,20 +4,17 @@
 export HADOOP_HOME
 PATH=$HADOOP_HOME/sbin:$HADOOP_HOME/bin:$PATH
 
+usage() {
+  cat <<EOF
+$(basename $0) [-r|--restart conf|sslconf] kms|httpfs
+EOF
+}
 
-run_tests() {
+run_kms() {
   : ${SSL_ENABLED:=false}
-
-  hdfs dfs -mkdir -p /tmp
-  hdfs dfs -ls /
-
-  httpfs_scheme=webhdfs
-  [[ $SSL_ENABLED == true ]] && httpfs_scheme=swebhdfs
-  hdfs dfs -ls $httpfs_scheme://localhost:14000/
 
   if [[ $SSL_ENABLED == false ]]; then
     hadoop daemonlog -getlevel localhost:9600 org.apache.hadoop.crypto.key.kms.server.KMS
-    hadoop daemonlog -getlevel localhost:14000 org.apache.hadoop.fs.http.server.HttpFSServer
   fi
 
   hadoop key delete new1 -f >/dev/null 2>&1 || true
@@ -31,7 +28,24 @@ run_tests() {
   hadoop key delete new2 -f
   hadoop key list
 
-  echo -e "\nALL tests passed !!!\n"
+  echo -e "\nKMS tests passed !!!\n"
+}
+
+run_httpfs() {
+  : ${SSL_ENABLED:=false}
+
+  hdfs dfs -mkdir -p /tmp
+  hdfs dfs -ls /
+
+  httpfs_scheme=webhdfs
+  [[ $SSL_ENABLED == true ]] && httpfs_scheme=swebhdfs
+  hdfs dfs -ls $httpfs_scheme://localhost:14000/
+
+  if [[ $SSL_ENABLED == false ]]; then
+    hadoop daemonlog -getlevel localhost:14000 org.apache.hadoop.fs.http.server.HttpFSServer
+  fi
+
+  echo -e "\nHttpFS tests passed !!!\n"
 }
 
 pseudo_dist_mode() {
@@ -41,18 +55,51 @@ pseudo_dist_mode() {
   hadoop --daemon $1 kms
 }
 
+copy_conf() {
+  conf=$1
+  cp $mydir/$conf/* $HADOOP_HOME/etc/hadoop
+}
+
 mydir=$(dirname $0)
-conf=$1
+
+while (( $# > 0 )); do
+  case $1 in
+    -h|--help)
+      usage
+      exit
+      ;;
+    -k|--kill|--stop)
+      pseudo_dist_mode stop
+      jps
+      ;;
+    -r|--restart)
+      pseudo_dist_mode stop
+      copy_conf "$2"
+      pseudo_dist_mode start
+      jps
+      shift # past argument
+      ;;
+    -s|--start)
+      copy_conf "$2"
+      pseudo_dist_mode start
+      jps
+      shift # past argument
+      ;;
+    -*)
+      echo "Unkown option '$1'" >&2
+      exit 1
+      ;;
+    *)
+      break
+  esac
+  shift
+done
 
 set -ex
 
-if [[ -n $conf ]]; then
-  pseudo_dist_mode stop
-  cp $mydir/$conf/* $HADOOP_HOME/etc/hadoop
-  pseudo_dist_mode start
-  jps
-fi
-
 test_env_file=$HADOOP_HOME/etc/hadoop/test_env
 [[ -f $test_env_file ]] && . $test_env_file
-run_tests
+
+for test in "$@"; do
+  run_$test
+done

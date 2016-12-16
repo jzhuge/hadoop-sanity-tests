@@ -16,10 +16,7 @@
 
   <property>
     <name>hadoop.httpfs.ssl.enabled</name>
-    <value>true</value>
-    <description>
-      Whether SSL is enabled. Default is false, i.e. disabled.
-    </description>
+    <value>false</value>
   </property>
 
 </configuration>

@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+mydir=$(dirname $0)
+myname=$(basename $0)
+
+: ${HADOOP_HOME:=~/hadoop/hadoop-dist/target/hadoop-3.0.0-alpha2-SNAPSHOT}
+
+usage() {
+  cat <<EOF
+SYNOPSIS
+  $myname start <conf>]
+  $myname restart <conf>]
+  $myname kill|stop]
+EOF
+}
+
+pseudo_dist_mode() {
+  $1-dfs.sh
+  hdfs --daemon $1 httpfs
+  hadoop --daemon $1 kms
+}
+
+copy_conf() {
+  conf=$1
+  cp $mydir/confs/$conf/* $HADOOP_HOME/etc/hadoop
+}
+
+if (( $# == 0 )); then
+  usage
+  exit
+fi
+
+while (( $# > 0 )); do
+  case $1 in
+    -h|--help)
+      usage
+      exit
+      ;;
+    kill|stop)
+      pseudo_dist_mode stop
+      jps
+      ;;
+    restart)
+      pseudo_dist_mode stop
+      copy_conf "$2"
+      pseudo_dist_mode start
+      jps
+      shift # past argument
+      ;;
+    start)
+      copy_conf "$2"
+      pseudo_dist_mode start
+      jps
+      shift # past argument
+      ;;
+    -*)
+      echo "Unknown option '$1'" >&2
+      exit 1
+      ;;
+    *)
+      echo "Unknown sub-command '$1'" >&2
+      exit 1
+      break
+  esac
+  shift
+done

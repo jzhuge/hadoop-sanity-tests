@@ -26,4 +26,6 @@
 
 ## Environment variables
 
-HADOOP_HOME|Hadoop home directory
+Name        | Description
+------------|-------------
+HADOOP_HOME | Hadoop home directory

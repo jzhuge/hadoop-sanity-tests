@@ -5,7 +5,7 @@ myname=$(basename $0)
 
 : ${HADOOP_HOME:=~/hadoop/hadoop-dist/target/hadoop-3.0.0-alpha2-SNAPSHOT}
 : ${TEST_SERVICES:=kms httpfs}
-: ${TEST_CONFS_DIR:=$mydir/confs}
+: ${TEST_CONFIG_DIR:=$mydir/config}
 
 usage() {
   cat <<EOF
@@ -48,8 +48,8 @@ pseudo_dist_mode() {
 copy_conf() {
   conf=$1
   [[ -z $conf ]] && return
-  echo "Copying $TEST_CONFS_DIR/$conf to $HADOOP_HOME/etc/hadoop"
-  cp $TEST_CONFS_DIR/$conf/* $HADOOP_HOME/etc/hadoop
+  echo "Copying $TEST_CONFIG_DIR/$conf to $HADOOP_HOME/etc/hadoop"
+  cp $TEST_CONFIG_DIR/$conf/* $HADOOP_HOME/etc/hadoop
 }
 
 if (( $# == 0 )); then

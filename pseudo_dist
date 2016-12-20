@@ -4,25 +4,52 @@ mydir=$(dirname $0)
 myname=$(basename $0)
 
 : ${HADOOP_HOME:=~/hadoop/hadoop-dist/target/hadoop-3.0.0-alpha2-SNAPSHOT}
+: ${TEST_SERVICES:=kms httpfs}
+: ${TEST_CONFS_DIR:=$mydir/confs}
 
 usage() {
   cat <<EOF
 SYNOPSIS
-  $myname start <conf>]
-  $myname restart <conf>]
-  $myname kill|stop]
+  $myname start [<conf>]
+  $myname restart [<conf>]
+  $myname kill|stop
 EOF
 }
 
 pseudo_dist_mode() {
-  $1-dfs.sh
-  hdfs --daemon $1 httpfs
-  hadoop --daemon $1 kms
+  local action=$1
+  local start_dfs
+  local start_httpfs
+  local start_kms
+
+  for svc in ${TEST_SERVICES}; do
+    case $svc in
+      hdfs)
+        start_dfs=yes
+        ;;
+      kms)
+        start_kms=yes
+        ;;
+      httpfs)
+        start_dfs=yes
+        start_httpfs=yes
+        ;;
+      *)
+        echo "Unknown service '$svc'" >&2
+        exit 1
+    esac
+  done
+ 
+  [[ -n $start_dfs ]] && $action-dfs.sh
+  [[ -n $start_httpfs ]] && httpfs.sh $action
+  [[ -n $start_kms ]] && kms.sh $action
 }
 
 copy_conf() {
   conf=$1
-  cp $mydir/confs/$conf/* $HADOOP_HOME/etc/hadoop
+  [[ -z $conf ]] && return
+  echo "Copying $TEST_CONFS_DIR/$conf to $HADOOP_HOME/etc/hadoop"
+  cp $TEST_CONFS_DIR/$conf/* $HADOOP_HOME/etc/hadoop
 }
 
 if (( $# == 0 )); then

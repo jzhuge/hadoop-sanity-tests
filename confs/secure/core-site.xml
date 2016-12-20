@@ -19,13 +19,45 @@
 <configuration>
 
   <property>
-    <name>dfs.namenode.secondary.http-address</name>
-    <value>localhost:9100</value>
+    <name>fs.default.name</name>
+    <value>hdfs://localhost:9000</value>
   </property>
 
   <property>
-    <name>dfs.replication</name>
-    <value>1</value>
+    <name>hadoop.ssl.enabled</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hadoop.security.authentication</name>
+    <value>kerberos</value>
+  </property>
+
+  <property>
+    <name>hadoop.security.authorization</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hadoop.security.auth_to_local</name>
+    <value>
+      RULE:[2:$1@$0](.*)s/.*/jzhuge/
+      DEFAULT
+    </value>
+  </property>
+
+  <property>
+    <name>hadoop.security.key.provider.path</name>
+    <value>kms://http@localhost:9600/kms</value>
+  </property>
+
+  <property>
+    <name>hadoop.proxyuser.jzhuge.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.jzhuge.groups</name>
+    <value>*</value>
   </property>
 
 </configuration>

@@ -7,6 +7,8 @@ myname=$(basename $0)
 : ${TEST_SERVICES:=kms httpfs}
 : ${TEST_CONFIG_DIR:=$mydir/config}
 
+PATH=$HADOOP_HOME/sbin:$HADOOP_HOME/bin:$PATH
+
 usage() {
   cat <<EOF
 SYNOPSIS

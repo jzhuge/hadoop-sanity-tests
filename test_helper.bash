@@ -19,13 +19,13 @@ init_envs() {
   fi
 
   # Set KMS_SSL_ENABLED to true if SSL is enabled
-  unset KMS_SSL_ENABLED KMS_SSL_KEYSTORE_FILE
+  unset KMS_SSL_ENABLED
   local g2=$(grep -A1 hadoop.kms.ssl.enabled $HADOOP_CONF_DIR/kms-site.xml)
   if [[ -n $g2 ]]; then
     grep -q true <<<$g2 && KMS_SSL_ENABLED=true
   elif [[ -f $HADOOP_CONF_DIR/kms-env.sh ]]; then
+    # This sets KMS_SSL_ENABLED
     . $HADOOP_CONF_DIR/kms-env.sh
-    [[ -n $KMS_SSL_KEYSTORE_FILE ]] && KMS_SSL_ENABLED=true
   fi
 
   [[ $HTTPFS_SSL_ENABLED == true ]] &&

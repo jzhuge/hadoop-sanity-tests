@@ -61,11 +61,6 @@ pseudo_dist_mode() {
     mkdir -p $HADOOP_HOME/temp
   fi
 
-  # Make kms.sh happy
-  if [[ -n $start_kms ]]; then
-    [[ -e $HOME/.keystore ]] || touch $HOME/.keystore
-  fi
-
   [[ -n $start_dfs ]] && $action-dfs.sh
   [[ -n $start_httpfs ]] && httpfs.sh $action $httpfs_opts
   [[ -n $start_kms ]] && kms.sh $action $kms_opts

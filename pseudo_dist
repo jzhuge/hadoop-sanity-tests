@@ -57,11 +57,6 @@ pseudo_dist_mode() {
     local kms_opts="-config conf/ssl-server.xml"
   fi
 
-  # Make httpfs.sh happy
-  if [[ -n $start_httpfs ]]; then
-    mkdir -p $HADOOP_HOME/temp
-  fi
-
   [[ -n $start_dfs ]] && $action-dfs.sh
   [[ -n $start_httpfs ]] && httpfs.sh $action $httpfs_opts
   [[ -n $start_kms ]] && kms.sh $action $kms_opts

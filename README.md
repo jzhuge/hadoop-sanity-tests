@@ -32,7 +32,6 @@ Name             | Description
 -----------------|-------------
 HADOOP_HOME      | Hadoop home directory
 HADOOP_CONF_DIR  | Hadoop config directory
-TEST_CONFIG_DIR  | Parent directory for test configurations
 TEST_HOST        | The host where Hadoop is running
 TEST_HTTPFS_PORT | HttpFS port
 TEST_KMS_PORT    | KMS port

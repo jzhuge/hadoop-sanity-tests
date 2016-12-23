@@ -7,7 +7,6 @@ myname=$(basename $0)
 export HADOOP_KEYSTORE_PASSWORD=${HADOOP_KEYSTORE_PASSWORD:-password}
 
 : ${TEST_SERVICES:=kms httpfs}
-: ${TEST_CONFIG_DIR:=$mydir/config}
 
 usage() {
   cat <<EOF
@@ -65,8 +64,8 @@ pseudo_dist_mode() {
 copy_conf() {
   conf=$1
   [[ -z $conf ]] && return
-  echo "Copying $TEST_CONFIG_DIR/$conf to $HADOOP_HOME/etc/hadoop"
-  cp $TEST_CONFIG_DIR/$conf/* $HADOOP_HOME/etc/hadoop
+  echo "Copying $conf to $HADOOP_HOME/etc/hadoop"
+  cp $conf/* $HADOOP_HOME/etc/hadoop
   # Refresh test environment after copying the config files
 }
 

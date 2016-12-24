@@ -1,10 +1,10 @@
-# Hadoop Regression Tests
+# Hadoop Automated Tests in Bats
 
 Only support HDFS, HttpFS, and KMS for now.
 
-## Setup
+## Install Bats
 
-* Install [Bats: Bash Automated Testing System](https://github.com/sstephenson/bats)
+* [Bats: Bash Automated Testing System](https://github.com/sstephenson/bats)
 
 ## Start Hadoop in pseudo-distributed mode
 

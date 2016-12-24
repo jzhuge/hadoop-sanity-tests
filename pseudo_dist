@@ -6,7 +6,7 @@ myname=$(basename $0)
 : ${HADOOP_HOME:=~/hadoop/hadoop-dist/target/hadoop-3.0.0-alpha2-SNAPSHOT}
 export HADOOP_KEYSTORE_PASSWORD=${HADOOP_KEYSTORE_PASSWORD:-password}
 
-: ${TEST_SERVICES:=kms httpfs}
+: ${TEST_SERVICES:=hdfs distcp httpfs kms}
 
 usage() {
   cat <<EOF
@@ -19,21 +19,25 @@ EOF
 
 pseudo_dist_mode() {
   local action=$1
-  local start_dfs
+  local start_hdfs
+  local start_yarn
   local start_httpfs
   local start_kms
 
   for svc in ${TEST_SERVICES}; do
     case $svc in
       hdfs)
-        start_dfs=yes
+        start_hdfs=yes
+        ;;
+      distcp)
+        start_yarn=yes
+        ;;
+      httpfs)
+        start_hdfs=yes
+        start_httpfs=yes
         ;;
       kms)
         start_kms=yes
-        ;;
-      httpfs)
-        start_dfs=yes
-        start_httpfs=yes
         ;;
       *)
         echo "Unknown service '$svc'" >&2
@@ -56,7 +60,8 @@ pseudo_dist_mode() {
     local kms_opts="-config conf/ssl-server.xml"
   fi
 
-  [[ -n $start_dfs ]] && $action-dfs.sh
+  [[ -n $start_hdfs ]] && $action-dfs.sh
+  [[ -n $start_yarn ]] && $action-yarn.sh
   [[ -n $start_httpfs ]] && httpfs.sh $action $httpfs_opts
   [[ -n $start_kms ]] && kms.sh $action $kms_opts
 }

@@ -12,11 +12,18 @@ load test_helper
   hdfs dfs -ls /
 }
 
+@test "hdfs rm -r -skipTrash" {
+  hdfs dfs -rm -f -r -skipTrash /tmp/hosts
+}
+
 @test "hdfs put" {
-  hdfs dfs -rm -f /tmp/hosts
   hdfs dfs -put /etc/hosts /tmp
 }
 
 @test "hdfs cat" {
   hdfs dfs -cat /tmp/hosts
+}
+
+@test "hdfs rm -skipTrash" {
+  hdfs dfs -rm -skipTrash /tmp/hosts
 }

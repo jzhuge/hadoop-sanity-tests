@@ -35,8 +35,4 @@ init_envs() {
 
 setup() {
   init_envs
-
-  # Create home directory
-  sudo -u hdfs hdfs dfs -mkdir /user/$USER
-  sudo -u hdfs hdfs dfs -chown $USER /user/$USER
 }

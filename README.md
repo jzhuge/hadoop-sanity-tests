@@ -1,4 +1,4 @@
-# Hadoop Automated Tests in Bats
+# Hadoop Bash Automated Tests
 
 Only support HDFS, DistCp, HttpFS, and KMS for now.
 

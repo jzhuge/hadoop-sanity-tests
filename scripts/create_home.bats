@@ -1,4 +1,6 @@
+load test_helper
+
 @test "create home dir" {
-  sudo -u hdfs hdfs dfs -mkdir -p /user/$USER
-  sudo -u hdfs hdfs dfs -chown $USER /user/$USER
+  hdfs dfs -mkdir -p /user/$USER
+  hdfs dfs -chown $USER /user/$USER
 }

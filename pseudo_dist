@@ -4,6 +4,7 @@ mydir=$(dirname $0)
 myname=$(basename $0)
 
 : ${HADOOP_HOME:=~/hadoop/hadoop-dist/target/hadoop-3.0.0-alpha2-SNAPSHOT}
+: ${HADOOP_CONF_DIR:=$HADOOP_HOME/etc/hadoop}
 export HADOOP_KEYSTORE_PASSWORD=${HADOOP_KEYSTORE_PASSWORD:-password}
 
 : ${TEST_SERVICES:=hdfs distcp httpfs kms}
@@ -68,9 +69,25 @@ pseudo_dist_mode() {
 
 copy_conf() {
   conf=$1
-  [[ -z $conf ]] && return
-  echo "Copying $conf to $HADOOP_HOME/etc/hadoop"
-  cp $conf/* $HADOOP_HOME/etc/hadoop
+  if [[ -z $conf ]]; then
+    echo "The config dir must be specified" >&2
+    usage
+    exit
+  fi
+  if [[ ! -d $HADOOP_CONF_DIR ]]; then
+    echo "The Hadoop config dir '$HADOOP_CONF_DIR' does not exist" >&2
+    exit
+  fi
+  if [[ -d $HADOOP_CONF_DIR.original ]]; then
+    echo "Restoring $HADOOP_CONF_DIR from $HADOOP_CONF_DIR.original"
+    rm -fr $HADOOP_CONF_DIR
+    cp -a $HADOOP_CONF_DIR.original $HADOOP_CONF_DIR
+  else
+    echo "Saving $HADOOP_CONF_DIR to $HADOOP_CONF_DIR.original"
+    cp -a $HADOOP_CONF_DIR $HADOOP_CONF_DIR.original
+  fi
+  echo "Copying $conf to $HADOOP_CONF_DIR"
+  cp $conf/* $HADOOP_CONF_DIR
   # Refresh test environment after copying the config files
 }
 

@@ -30,8 +30,7 @@ pseudo_dist_mode() {
       hdfs)
         start_hdfs=yes
         ;;
-      distcp)
-      yarn)
+      distcp|yarn)
         start_yarn=yes
         ;;
       httpfs)
@@ -71,9 +70,8 @@ pseudo_dist_mode() {
 copy_conf() {
   conf=$1
   if [[ -z $conf ]]; then
-    echo "The config dir must be specified" >&2
-    usage
-    exit
+    echo "Not changing configuration"
+    return
   fi
   if [[ ! -d $HADOOP_CONF_DIR ]]; then
     echo "The Hadoop config dir '$HADOOP_CONF_DIR' does not exist" >&2
@@ -89,7 +87,6 @@ copy_conf() {
   fi
   echo "Copying $conf to $HADOOP_CONF_DIR"
   cp $conf/* $HADOOP_CONF_DIR
-  # Refresh test environment after copying the config files
 }
 
 if (( $# == 0 )); then

@@ -31,6 +31,7 @@ pseudo_dist_mode() {
         start_hdfs=yes
         ;;
       distcp)
+      yarn)
         start_yarn=yes
         ;;
       httpfs)

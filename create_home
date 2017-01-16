@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+user_name=${1:-$USER}
+
+hdfs dfs -mkdir -p /user/$user_name
+hdfs dfs -chown $user_name /user/$user_name

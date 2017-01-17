@@ -17,7 +17,7 @@
 <!-- Put site-specific property overrides in this file. -->
 
 <configuration>
- 
+
   <property>
     <name>fs.default.name</name>
     <value>hdfs://localhost:9000</value>
@@ -41,9 +41,5 @@
     <name>hadoop.proxyuser.jzhuge.groups</name>
     <value>*</value>
   </property>
-
-  <include xmlns="http://www.w3.org/2001/XInclude" href="auth-keys.xml">
-    <fallback />
-  </include>
 
 </configuration>

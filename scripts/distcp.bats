@@ -1,7 +1,7 @@
 load test_helper
 
 @test "distcp" {
-  hdfs dfs -rm -f -r -skipTrash /tmp/hosts
-  hdfs dfs -put /etc/hosts /tmp/hosts
-  hadoop distcp /tmp/hosts /tmp/hosts.cp
+  hdfs dfs -rm -f -r -skipTrash /tmp/100M
+  dd if=/dev/urandom bs=1M count=100 | hdfs dfs -put - /tmp/100M
+  hadoop distcp /tmp/100M /tmp/100M.cp
 }

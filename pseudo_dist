@@ -5,6 +5,7 @@ myname=$(basename $0)
 
 : ${HADOOP_HOME:=~/hadoop/hadoop-dist/target/hadoop-3.0.0-alpha2-SNAPSHOT}
 : ${HADOOP_CONF_DIR:=$HADOOP_HOME/etc/hadoop}
+: ${HADOOP_DFS_DIR:=/tmp/hadoop-$USER/dfs}
 export HADOOP_KEYSTORE_PASSWORD=${HADOOP_KEYSTORE_PASSWORD:-password}
 
 : ${TEST_SERVICES:=hdfs distcp httpfs kms}
@@ -61,7 +62,15 @@ pseudo_dist_mode() {
     local kms_opts="-config conf/ssl-server.xml"
   fi
 
-  [[ -n $start_hdfs ]] && $action-dfs.sh
+  if [[ -n $start_hdfs ]]; then
+    if [[ start == $action ]]; then
+      echo "Removing directory $HADOOP_DFS_DIR"
+      rm -fr $HADOOP_DFS_DIR
+      hdfs namenode -format
+    fi
+    $action-dfs.sh
+  fi
+
   [[ -n $start_yarn ]] && $action-yarn.sh
   [[ -n $start_httpfs ]] && httpfs.sh $action $httpfs_opts
   [[ -n $start_kms ]] && kms.sh $action $kms_opts

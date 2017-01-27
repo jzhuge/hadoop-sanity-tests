@@ -17,20 +17,25 @@
 <!-- Put site-specific property overrides in this file. -->
 
 <configuration>
+
   <property>
     <name>dfs.namenode.secondary.http-address</name>
     <value>localhost:9100</value>
   </property>
+
   <property>
     <name>dfs.replication</name>
     <value>1</value>
   </property>
+
   <property>
     <name>dfs.namenode.acls.enabled</name>
     <value>true</value>
   </property>
+
   <property>
     <name>dfs.namenode.posix.acl.inheritance.enabled</name>
     <value>true</value>
   </property>
+
 </configuration>

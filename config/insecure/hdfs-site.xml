@@ -26,4 +26,14 @@
     <value>1</value>
   </property>
 
+  <property>
+    <name>dfs.namenode.acls.enabled</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>dfs.namenode.posix.acl.inheritance.enabled</name>
+    <value>true</value>
+  </property>
+
 </configuration>

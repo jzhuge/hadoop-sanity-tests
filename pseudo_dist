@@ -3,12 +3,14 @@
 mydir=$(dirname $0)
 myname=$(basename $0)
 
-: ${HADOOP_HOME:=~/hadoop/hadoop-dist/target/hadoop-3.0.0-alpha2-SNAPSHOT}
+: ${HADOOP_HOME:=~/hadoop/hadoop-dist/target/hadoop-3.0.0-alpha3-SNAPSHOT}
 : ${HADOOP_CONF_DIR:=$HADOOP_HOME/etc/hadoop}
 : ${HADOOP_DFS_DIR:=/tmp/hadoop-$USER/dfs}
 export HADOOP_KEYSTORE_PASSWORD=${HADOOP_KEYSTORE_PASSWORD:-password}
 
 : ${TEST_SERVICES:=hdfs distcp httpfs kms}
+
+PATH=$HADOOP_HOME/sbin:$HADOOP_HOME/bin:$PATH
 
 usage() {
   cat <<EOF
@@ -16,6 +18,13 @@ SYNOPSIS
   $myname start [<conf>]
   $myname restart [<conf>]
   $myname kill|stop
+  $myname envvars
+EOF
+}
+
+print_env_vars() {
+  cat <<EOF
+PATH=$PATH
 EOF
 }
 
@@ -108,6 +117,9 @@ while (( $# > 0 )); do
     -h|--help)
       usage
       exit
+      ;;
+    envvars)
+      print_env_vars
       ;;
     kill|stop)
       pseudo_dist_mode stop

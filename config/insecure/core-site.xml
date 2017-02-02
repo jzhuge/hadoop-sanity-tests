@@ -42,4 +42,14 @@
     <value>*</value>
   </property>
 
+  <property>
+    <name>hadoop.security.authorization</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hadoop.security.instrumentation.requires.admin</name>
+    <value>true</value>
+  </property>
+
 </configuration>

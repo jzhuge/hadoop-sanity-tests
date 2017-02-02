@@ -29,4 +29,9 @@
     <value>true</value>
   </property>
 
+  <property>
+    <name>hadoop.kms.http.administrators</name>
+    <value>${user.name}</value>
+  </property>
+
 </configuration>

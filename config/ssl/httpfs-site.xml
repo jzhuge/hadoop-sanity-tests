@@ -19,4 +19,9 @@
     <value>true</value>
   </property>
 
+  <property>
+    <name>hadoop.httpfs.http.administrators</name>
+    <value>${user.name}</value>
+  </property>
+
 </configuration>

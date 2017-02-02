@@ -20,6 +20,11 @@
   </property>
 
   <property>
+    <name>hadoop.httpfs.http.administrators</name>
+    <value>${user.name}</value>
+  </property>
+
+  <property>
     <name>httpfs.authentication.type</name>
     <value>kerberos</value>
   </property>

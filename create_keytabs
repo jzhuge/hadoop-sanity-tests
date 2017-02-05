@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+#
+# Usage: create_keytabs KDC_HOST FQ_HOSTNAME REALM
+#
+
+mydir=$(dirname $0)
+myname=$(basename $0)
+
+kdc_host=${1:-$KERBEROS_KDC_HOST}
+fq_hostname=${2:-$KERBEROS_FQ_HOSTNAME}
+realm=${3:-$KERBEROS_REALM}
+
+user_principal=$USER@$realm
+user_keytab=$USER.keytab
+http_principal=HTTP/$fq_hostname@$realm
+kms_keytab=kms.keytab
+hdfs_principal=hdfs/$fq_hostname@$realm
+hdfs_keytab=hdfs.keytab
+httpfs_principal=httpfs/$fq_hostname@$realm
+httpfs_keytab=httpfs.keytab
+
+remote_keytabs_dir=/tmp/keytabs
+local_keytabs_dir=~/.config/kerberos/
+
+ssh $kdc_host sudo rm -fr $remote_keytabs_dir
+ssh $kdc_host sudo mkdir -m 0755 -p $remote_keytabs_dir
+
+ssh $kdc_host sudo kadmin.local <<EOF
+addprinc -randkey $user_principal
+ktadd -norandkey -k $remote_keytabs_dir/$user_keytab $user_principal
+
+addprinc -randkey $http_principal
+ktadd -norandkey -k $remote_keytabs_dir/$kms_keytab $http_principal
+
+addprinc -randkey $httpfs_principal
+ktadd -norandkey -k $remote_keytabs_dir/$httpfs_keytab $httpfs_principal $http_principal
+
+addprinc -randkey $hdfs_principal
+ktadd -norandkey -k $remote_keytabs_dir/$hdfs_keytab $hdfs_principal $http_principal
+EOF
+
+ssh $kdc_host sudo chmod -R a+r $remote_keytabs_dir
+
+rsync -av $kdc_host:$remote_keytabs_dir/ $local_keytabs_dir

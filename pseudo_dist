@@ -78,6 +78,12 @@ pseudo_dist_mode() {
       hdfs namenode -format
     fi
     $action-dfs.sh
+    if [[ start == $action ]]; then
+      hdfs dfs -mkdir -p /tmp &&
+      hdfs dfs -chmod 1777 /tmp
+      hdfs dfs -mkdir -p /user/$USER &&
+      hdfs dfs -chown $USER /user/$USER
+    fi
   fi
 
   [[ -n $start_yarn ]] && $action-yarn.sh

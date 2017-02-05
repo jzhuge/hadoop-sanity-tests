@@ -24,7 +24,7 @@
 
 # The HTTP port used by KMS
 #
-# export KMS_HTTP_PORT=9600
+export KMS_HTTP_PORT=9600
 
 # The Admin port used by KMS
 #
@@ -40,12 +40,12 @@
 
 # The location of the SSL keystore if using SSL
 #
-# export KMS_SSL_KEYSTORE_FILE=${HOME}/.keystore
+export KMS_SSL_KEYSTORE_FILE=${HOME}/.config/ssl/keystore
 
 #
 # The password of the SSL keystore if using SSL
 #
-# export KMS_SSL_KEYSTORE_PASS=password
+export KMS_SSL_KEYSTORE_PASS=password
 
 
 ##

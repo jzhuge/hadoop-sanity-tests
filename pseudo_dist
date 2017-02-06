@@ -56,19 +56,20 @@ pseudo_dist_mode() {
     esac
   done
  
-  if [[ -f $mydir/scripts/test_helper.bash ]]; then
-    . $mydir/scripts/test_helper.bash
-    init_envs
-  fi
+  set -x
 
-  # For old httpfs.sh
-  if [[ $HTTPFS_SSL_ENABLED == true ]]; then
-    local httpfs_opts="-config conf/ssl-server.xml"
-  fi
+  if [[ start == $action ]]; then
+    [[ -r $HADOOP_CONF_DIR/test_env ]] && . $HADOOP_CONF_DIR/test_env
 
-  # For old kms.sh
-  if [[ $KMS_SSL_ENABLED == true ]]; then
-    local kms_opts="-config conf/ssl-server.xml"
+    # For old httpfs.sh
+    if [[ $TEST_SSL_ENABLED == yes ]]; then
+      local httpfs_opts="-config conf/ssl-server.xml"
+    fi
+
+    # For old kms.sh
+    if [[ $TEST_SSL_ENABLED == yes ]]; then
+      local kms_opts="-config conf/ssl-server.xml"
+    fi
   fi
 
   if [[ -n $start_hdfs ]]; then

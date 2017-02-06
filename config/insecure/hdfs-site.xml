@@ -36,4 +36,9 @@
     <value>true</value>
   </property>
 
+  <property>
+    <name>dfs.cluster.administrators</name>
+    <value>${user.name}</value>
+  </property>
+
 </configuration>

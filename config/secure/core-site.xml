@@ -46,6 +46,7 @@
   <property>
     <name>hadoop.security.auth_to_local</name>
     <value>
+      RULE:[2:$1@$0](httpfs/.*@.*REALM.TLD)s/.*/httpfs/
       DEFAULT
     </value>
   </property>
@@ -61,6 +62,15 @@
   </property>
   <property>
     <name>hadoop.proxyuser.jzhuge.groups</name>
+    <value>*</value>
+  </property>
+
+  <property>
+    <name>hadoop.proxyuser.httpfs.hosts</name>
+    <value>*</value>
+  </property>
+  <property>
+    <name>hadoop.proxyuser.httpfs.groups</name>
     <value>*</value>
   </property>
 

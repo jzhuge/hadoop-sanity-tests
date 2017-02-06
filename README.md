@@ -12,10 +12,11 @@
 
     ./create_keytabs KDC_HOST FQ_HOSTNAME REALM
 
-    kinit -t ~/.config/kerberos/hdfs.keytab hdfs/localhost@GCE.CLOUDERA.COM
+    kdestroy ; kinit -t ~/.config/kerberos/hdfs.keytab hdfs/localhost@GCE.CLOUDERA.COM
     ./pseudo_dist restart config/secure
+    kdestroy ; kinit -t ~/.config/kerberos/$USER.keytab
 
-    kinit -t ~/.config/kerberos/$USER.keytab
+TODO: yarn fails to start.
 
 ## Stop the pseudo-distributed Hadoop
 

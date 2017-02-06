@@ -12,7 +12,7 @@
 
     ./create_keytabs KDC_HOST FQ_HOSTNAME REALM
 
-    kdestroy ; kinit -t ~/.config/kerberos/hdfs.keytab hdfs/localhost@GCE.CLOUDERA.COM
+    kdestroy ; kinit -t ~/.config/kerberos/hdfs.keytab hdfs/localhost@REALM
     ./pseudo_dist restart config/secure
     kdestroy ; kinit -t ~/.config/kerberos/$USER.keytab
 

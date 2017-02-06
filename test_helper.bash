@@ -5,10 +5,10 @@ init_envs() {
   : ${TEST_SSL_ENABLED:=no}
 
   if [[ $TEST_SSL_ENABLED == yes ]]; then
-    : ${TEST_DAEMONLOG_PROTO:=https}
+    : ${TEST_HTTP_SCHEME:=https}
     : ${TEST_HTTPFS_SCHEME:=swebhdfs}
   else
-    : ${TEST_DAEMONLOG_PROTO:=http}
+    : ${TEST_HTTP_SCHEME:=http}
     : ${TEST_HTTPFS_SCHEME:=webhdfs}
   fi
 }

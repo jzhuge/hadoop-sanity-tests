@@ -7,6 +7,7 @@ myname=$(basename $0)
 : ${HADOOP_CONF_DIR:=$HADOOP_HOME/etc/hadoop}
 : ${HADOOP_DFS_DIR:=/tmp/hadoop-$USER/dfs}
 export HADOOP_KEYSTORE_PASSWORD=${HADOOP_KEYSTORE_PASSWORD:-password}
+export KMS_SILENT=${KMS_SILENT:-false}
 
 : ${TEST_SERVICES:=hdfs distcp httpfs kms}
 

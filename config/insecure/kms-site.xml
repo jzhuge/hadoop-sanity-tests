@@ -34,4 +34,9 @@
     <value>${user.name}</value>
   </property>
 
+  <property>
+    <name>hadoop.kms.authentication.type</name>
+    <value>simple</value>
+  </property>
+
 </configuration>

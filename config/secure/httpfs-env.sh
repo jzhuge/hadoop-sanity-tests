@@ -42,6 +42,10 @@
 #
 # export HTTPFS_MAX_HTTP_HEADER_SIZE=65536
 
+# Indicates if HttpFS is using SSL
+#
+export HTTPFS_SSL_ENABLED=true
+
 # The location of the SSL keystore if using SSL
 #
 export HTTPFS_SSL_KEYSTORE_FILE=${HOME}/.config/ssl/keystore

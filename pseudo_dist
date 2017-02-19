@@ -3,13 +3,22 @@
 mydir=$(dirname $0)
 myname=$(basename $0)
 
-: ${HADOOP_HOME:=~/hadoop/hadoop-dist/target/hadoop-3.0.0-alpha3-SNAPSHOT}
-: ${HADOOP_CONF_DIR:=$HADOOP_HOME/etc/hadoop}
-: ${HADOOP_DFS_DIR:=/tmp/hadoop-$USER/dfs}
+export HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-$HADOOP_HOME/etc/hadoop}
+export HADOOP_HOME=${HADOOP_HOME:-$HOME/hadoop/hadoop-dist/target/hadoop-3.0.0-alpha3-SNAPSHOT}
 export HADOOP_KEYSTORE_PASSWORD=${HADOOP_KEYSTORE_PASSWORD:-password}
-export KMS_SILENT=${KMS_SILENT:-false}
+export HADOOP_LOGLEVEL=${HADOOP_LOGLEVEL:-WARN}
 
+: ${TEST_HADOOP_DFS_DIR:=/tmp/hadoop-$USER/dfs}
 : ${TEST_SERVICES:=hdfs distcp httpfs kms}
+: ${TEST_SILENT:=true}
+
+if [[ $TEST_SILENT = false ]]; then
+  export HTTPFS_SILENT=${HTTPFS_SILENT:-false}
+  export KMS_SILENT=${KMS_SILENT:-false}
+else
+  export HTTPFS_SILENT=${HTTPFS_SILENT:-true}
+  export KMS_SILENT=${KMS_SILENT:-true}
+fi
 
 PATH=$HADOOP_HOME/sbin:$HADOOP_HOME/bin:$PATH
 
@@ -75,8 +84,8 @@ pseudo_dist_mode() {
 
   if [[ -n $start_hdfs ]]; then
     if [[ start == $action ]]; then
-      echo "Removing directory $HADOOP_DFS_DIR"
-      rm -fr $HADOOP_DFS_DIR
+      echo "Removing directory $TEST_HADOOP_DFS_DIR"
+      rm -fr $TEST_HADOOP_DFS_DIR
       hdfs namenode -format
     fi
     $action-dfs.sh

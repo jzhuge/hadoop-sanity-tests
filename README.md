@@ -1,26 +1,38 @@
 # Hadoop Setup Scripts
 
-## Start the insecure pseudo-distributed Hadoop
+## Preparation
+
+### Build the Hadoop source tree
+
+    mvn install package -Pdist -Dtar -DskipTests -DskipShade -Dmaven.javadoc.skip
+
+### Set the environment variable HADOOP_HOME
+
+    export HADOOP_HOME=~/<hadoop_dir>/hadoop-dist/target/hadoop-<hadoop_version>
+
+## Run Hadoop in pseudo-distributed mode
+
+### Start Hadoop with insecure configuration
 
     ./pseudo_dist start config/insecure
 
-## Start the SSL-enabled pseudo-distributed Hadoop
+### Start Hadoop with SSL configuration
 
     ./pseudo_dist start config/ssl
 
-## Start the secure pseudo-distributed Hadoop with SSL and Kerberos
+### Start Hadoop with SSL and Kerberos configuration
 
-    ./create_keytabs KDC_HOST FQ_HOSTNAME REALM
+    ./create_keytabs <kdc_host> <fq_hostname> <kerberos_realm>
 
-    kdestroy ; kinit -t ~/.config/kerberos/hdfs.keytab hdfs/localhost@REALM
-    ./pseudo_dist restart config/secure
+    kdestroy ; kinit -t ~/.config/kerberos/hdfs.keytab hdfs/localhost@<kerberos_realm>
+    ./pseudo_dist start config/secure
     kdestroy ; kinit -t ~/.config/kerberos/$USER.keytab
 
 TODO: yarn fails to start.
 
-## Stop the pseudo-distributed Hadoop
+### Stop Hadoop
 
-    pseudo_dist kill|stop
+    ./pseudo_dist kill|stop
 
 ## Environment variables
 

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+PATH=$HADOOP_HOME/bin:$PATH
+[[ -r $HADOOP_HOME/etc/hadoop/test_env ]] &&
+  export $(< $HADOOP_HOME/etc/hadoop/test_env)
+
+exec "$@"

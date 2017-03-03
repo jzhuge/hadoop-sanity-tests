@@ -42,33 +42,4 @@
   </description>
 </property>
 
-<property>
-  <name>ssl.client.keystore.location</name>
-  <value>${user.home}/.config/ssl/keystore</value>
-  <description>Keystore to be used by clients like distcp. Must be
-  specified.
-  </description>
-</property>
-
-<property>
-  <name>ssl.client.keystore.password</name>
-  <value>password</value>
-  <description>Optional. Default value is "".
-  </description>
-</property>
-
-<property>
-  <name>ssl.client.keystore.keypassword</name>
-  <value>password</value>
-  <description>Optional. Default value is "".
-  </description>
-</property>
-
-<property>
-  <name>ssl.client.keystore.type</name>
-  <value>jks</value>
-  <description>Optional. The keystore file format, default value is "jks".
-  </description>
-</property>
-
 </configuration>

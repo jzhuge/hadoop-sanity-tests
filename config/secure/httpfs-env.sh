@@ -53,7 +53,7 @@ export HTTPFS_SSL_KEYSTORE_FILE=${HOME}/.config/ssl/keystore
 #
 # The password of the SSL keystore if using SSL
 #
-export HTTPFS_SSL_KEYSTORE_PASS=password
+export HTTPFS_SSL_KEYSTORE_PASS="<a:bc=def?>"
 
 ##
 ## Tomcat specific settings

@@ -25,12 +25,12 @@
 
 <property>
   <name>ssl.server.keystore.password</name>
-  <value>password</value>
+  <value>&lt;a:bc=def?&gt;</value>
 </property>
 
 <property>
   <name>ssl.server.keystore.keypassword</name>
-  <value>password</value>
+  <value>&lt;a:bc=def?&gt;</value>
 </property>
 
 <property>

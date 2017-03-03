@@ -45,7 +45,7 @@ export KMS_SSL_KEYSTORE_FILE=${HOME}/.config/ssl/keystore
 #
 # The password of the SSL keystore if using SSL
 #
-export KMS_SSL_KEYSTORE_PASS=password
+export KMS_SSL_KEYSTORE_PASS="<a:bc=def?>"
 
 
 ##

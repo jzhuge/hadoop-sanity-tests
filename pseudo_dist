@@ -3,8 +3,8 @@
 mydir=$(dirname $0)
 myname=$(basename $0)
 
-export HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-$HADOOP_HOME/etc/hadoop}
 export HADOOP_HOME=${HADOOP_HOME:-$HOME/hadoop/hadoop-dist/target/hadoop-3.0.0-alpha3-SNAPSHOT}
+export HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-$HADOOP_HOME/etc/hadoop}
 export HADOOP_KEYSTORE_PASSWORD=${HADOOP_KEYSTORE_PASSWORD:-password}
 export HADOOP_LOGLEVEL=${HADOOP_LOGLEVEL:-WARN}
 

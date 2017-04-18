@@ -39,6 +39,21 @@
 </property>
 
 <property>
+  <name>ssl.server.truststore.location</name>
+  <value>${user.home}/.config/ssl/truststore</value>
+</property>
+
+<property>
+  <name>ssl.server.truststore.password</name>
+  <value>password</value>
+</property>
+
+<property>
+  <name>ssl.server.truststore.type</name>
+  <value>jks</value>
+</property>
+
+<property>
   <name>ssl.server.exclude.cipher.list</name>
   <value>TLS_ECDHE_RSA_WITH_RC4_128_SHA,SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA,
   SSL_RSA_WITH_DES_CBC_SHA,SSL_DHE_RSA_WITH_DES_CBC_SHA,

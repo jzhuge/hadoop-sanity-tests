@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 
-PATH=$HADOOP_HOME/bin:$PATH
-[[ -r $HADOOP_HOME/etc/hadoop/test_env ]] &&
-  export $(< $HADOOP_HOME/etc/hadoop/test_env)
+if [[ -z $HADOOP_HOME ]]; then
+  export HADOOP_HOME=$(detect_hadoop_home)
+  if [[ -z $HADOOP_HOME ]]; then
+    echo -e "Please set HADOOP_HOME"
+    exit 1
+  fi
+fi
+
+PATH="$HADOOP_HOME/bin":$PATH
+
+test_env="$HADOOP_HOME/etc/hadoop/test_env"
+[[ -r "$test_env" ]] && export $(grep -v '^#' "$test_env" | cut -d= -f1)
 
 exec "$@"

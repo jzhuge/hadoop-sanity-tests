@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+setup_scripts=${HADOOP_SETUP_SCRIPTS:-~/hadoop-setup-scripts}
+bats_tests=${HADOOP_BATS_TESTS:-~/hadoop-bats-tests}
+modes=${TEST_MODES:-insecure ssl secure}
+
+PATH=$setup_scripts:$PATH
+
+t2() {
+  echo -e "\n== $@ ==\n"
+}
+
+if [[ -z $HADOOP_HOME ]]; then
+  export HADOOP_HOME=$(detect_hadoop_home)
+  if [[ -z $HADOOP_HOME ]]; then
+    echo -e "Please set HADOOP_HOME"
+    exit 1
+  fi
+fi
+
+for mode in $modes; do
+  t2 "Starting Hadoop in $mode pseudo mode"
+  [[ $mode == secure ]] && kinit -t ~/.config/kerberos/hdfs.keytab hdfs/localhost@GCE.CLOUDERA.COM
+  pseudo_dist restart $setup_scripts/config/$mode
+  [[ $mode == secure ]] && kinit -t ~/.config/kerberos/$USER.keytab $USER@GCE.CLOUDERA.COM
+
+  t2 "Running Hadoop BATS tests"
+  test_env bats $bats_tests
+done
+
+t2 "Stopping Hadoop"
+pseudo_dist stop

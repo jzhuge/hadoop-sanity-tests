@@ -20,9 +20,9 @@ fi
 
 for mode in $modes; do
   t2 "Starting Hadoop in $mode pseudo mode"
-  [[ $mode == secure ]] && kinit -t ~/.config/kerberos/hdfs.keytab hdfs/localhost@GCE.CLOUDERA.COM
+  [[ $mode == secure ]] && kinit -t ~/.config/kerberos/hdfs.keytab hdfs/localhost
   pseudo_dist restart $setup_scripts/config/$mode
-  [[ $mode == secure ]] && kinit -t ~/.config/kerberos/$USER.keytab $USER@GCE.CLOUDERA.COM
+  [[ $mode == secure ]] && kinit -t ~/.config/kerberos/$USER.keytab $USER
 
   t2 "Running Hadoop BATS tests"
   test_env bats $bats_tests

@@ -19,12 +19,12 @@ if [[ -z $HADOOP_HOME ]]; then
 fi
 
 for mode in $modes; do
-  t2 "Starting Hadoop in $mode pseudo mode"
+  t2 "Starting Hadoop in $mode mode"
   [[ $mode == secure ]] && kinit -t ~/.config/kerberos/hdfs.keytab hdfs/localhost
   pseudo_dist restart $setup_scripts/config/$mode
   [[ $mode == secure ]] && kinit -t ~/.config/kerberos/$USER.keytab $USER
 
-  t2 "Running Hadoop BATS tests"
+  t2 "Running Hadoop BATS tests in $mode mode"
   test_env bats $bats_tests
 done
 

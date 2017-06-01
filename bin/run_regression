@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
+#
+my_path=$(readlink -f "${BASH_SOURCE[0]}")
+top_dir=$(readlink -f $(dirname "$my_path")/..)
 
-setup_scripts=${HADOOP_SETUP_SCRIPTS:-~/hadoop-setup-scripts}
-bats_tests=${HADOOP_BATS_TESTS:-~/hadoop-bats-tests}
 modes=${TEST_MODES:-insecure ssl secure}
 
-PATH=$setup_scripts:$PATH
+PATH=$top_dir/bin:$PATH
 
 t2() {
   echo -e "\n== $@ ==\n"
@@ -21,11 +22,11 @@ fi
 for mode in $modes; do
   t2 "Starting Hadoop in $mode mode"
   [[ $mode == secure ]] && kinit -t ~/.config/kerberos/hdfs.keytab hdfs/localhost
-  pseudo_dist restart $setup_scripts/config/$mode
+  pseudo_dist restart $top_dir/config/$mode
   [[ $mode == secure ]] && kinit -t ~/.config/kerberos/$USER.keytab $USER
 
   t2 "Running Hadoop BATS tests in $mode mode"
-  test_env bats $bats_tests
+  test_env bats $top_dir/bats
 done
 
 t2 "Stopping Hadoop"

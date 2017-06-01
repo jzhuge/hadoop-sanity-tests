@@ -7,7 +7,7 @@ if [[ -z "$HADOOP_HOME" ]]; then
   else
     etc_hadoop=$(find hadoop-dist -path '**/etc/hadoop' 2>/dev/null)
     if [[ -d "$etc_hadoop" ]]; then
-      HADOOP_HOME="$PWD/${etc_hadoop/\/etc\/hadoop//}"
+      HADOOP_HOME="$PWD/${etc_hadoop/\/etc\/hadoop/}"
       echo "Set HADOOP_HOME to $HADOOP_HOME in hadoop-dist" >&2
     else
       HADOOP_HOME="$HOME/hadoop"

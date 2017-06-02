@@ -11,6 +11,9 @@ fi
 PATH="$HADOOP_HOME/bin":$PATH
 
 test_env="$HADOOP_HOME/etc/hadoop/test_env"
-[[ -r "$test_env" ]] && export $(grep -v '^#' "$test_env" | cut -d= -f1)
+if [[ -r "$test_env" ]]; then
+  . $test_env
+  export $(grep -v '^#' "$test_env" | cut -d= -f1)
+fi
 
 exec "$@"

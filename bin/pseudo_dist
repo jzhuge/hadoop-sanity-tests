@@ -114,6 +114,10 @@ copy_conf() {
     echo "Not changing configuration"
     return
   fi
+  if [[ ! -d $conf ]]; then
+    echo "The new config dir '$conf' does not exist" >&2
+    exit
+  fi
   if [[ ! -d $HADOOP_CONF_DIR ]]; then
     echo "The Hadoop config dir '$HADOOP_CONF_DIR' does not exist" >&2
     exit

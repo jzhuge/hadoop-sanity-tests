@@ -6,14 +6,10 @@ usage() {
   cat <<EOF
 Verify a Hadoop release.
 
-The current directory is the working directory unless VREL_DIR is specified.
-Logs are saves in "logs" directory in the working directory.
-
 Usage:
   $my_name <release_url>
 
 Environment:
-  VREL_DIR          The workig directory.
   VREL_STEPS        Verification steps.
 
 EOF
@@ -24,112 +20,133 @@ error() {
 }
 
 h1() {
-  echo -e "\n= $@ ="
+  echo -e "\n= $@ =\n"
 }
 
 h2() {
-  echo -e "\n== $@ =="
+  echo -e "\n== $@ ==\n"
 }
 
 verify_release() {
   h1 "Verify $release"
 
+  local default_steps="
+signatures
+checksums
+binary_sanity
+source_build
+source_sanity
+source_aws
+source_adls"
+  local steps=${VREL_STEPS:=$default_steps}
+
+  echo "Verification steps:"
+  for step in $steps; do
+    echo "  $step"
+  done
+
   if [[ -d $release ]]; then
     cd $release
   else
-    mkdir $release
-    cd $release
-    download
+    mkdir $release && cd $release && download || return 1
   fi
 
   for step in $steps; do
-    $step
+    $step || failed_steps+=" $step"
   done
+
+  if [[ -n $failed_steps ]]; then
+    echo "Failed steps:$failed_steps"
+    return 2
+  fi
 }
 
 download() {
   h2 "Download release tarballs"
-  mkdir $release
   wget --quiet --recursive --no-directories --no-host-directories --no-parent --reject "index.html*" $release_url
 }
 
-keys() {
+signatures() {
+  local rc
+
   h2 "Import PGP keys"
   rm -f KEYS
-  wget --quiet https://dist.apache.org/repos/dist/release/hadoop/common/KEYS
-  gpg --quiet --import KEYS
-}
+  wget --quiet https://dist.apache.org/repos/dist/release/hadoop/common/KEYS &&
+    gpg --quiet --import KEYS
 
-signatures() {
   h2 "Verify PGP signatures"
   for asc in *asc; do
     gz=${asc//.asc/}
-    gpg --quiet --verify $asc $gz
+    gpg --quiet --verify $asc $gz || rc=1
   done
+
+  return $rc
 }
 
 checksums() {
+  local rc
   h2 "Verify checksums"
   for mds in *.mds; do
     echo "Verify SHA256 checksum in $mds"
-    shasum -a 256 -c <(checksum_from_mds SHA256 $mds)
+    shasum -a 256 -c <(checksum_from_mds SHA256 $mds) || rc=1
     echo "Verify MD5 checksum in $mds"
-    md5sum -c <(checksum_from_mds MD5 $mds)
+    md5sum -c <(checksum_from_mds MD5 $mds) || rc=1
   done
-}
-
-binary_untar() {
-  [[ -d $release_bin ]] || {
-    h2 "Untar binary tarball"
-    tar xf $release.tar.gz
-  }
+  return $rc
 }
 
 binary_sanity() {
-  h2 "Run sanity tests on binary"
+  local rc
+  h2 "Run sanity tests for the binary package"
+  [[ -d $release_bin ]] || tar xf $release.tar.gz
   pushd $release_bin
-  run_all
+  run_all || rc=$?
   popd
-}
-
-source_untar() {
-  [[ -d $release_src ]] || {
-    h2 "Untar source tarball"
-    tar xf $release-src.tar.gz
-  }
+  return $rc
 }
 
 source_build() {
+  local rc
   h2 "Build source"
+  [[ -d $release_src ]] || tar xf $release-src.tar.gz
   pushd $release_src
-  mvn --quiet clean && mvn --quiet install -DskipTests -DskipShade -Dmaven.javadoc.skip -Pnative -Pdist -Dtar
+  mvn --quiet clean &&
+    mvn --quiet install -DskipTests -DskipShade -Dmaven.javadoc.skip -Pnative -Pdist -Dtar ||
+    rc=$?
   popd
+  return $rc
 }
 
 source_sanity() {
-  h2 "Run sanity tests on the new build"
+  local rc
+  h2 "Run sanity tests for the source package"
   pushd $release_src
-  run_all
+  run_all || rc=$?
   popd
+  return $rc
 }
 
 source_aws() {
+  local rc
   [[ -e $HOME/.config/aws/auth-keys.xml ]] || return
   [[ -e $HOME/.config/aws/contract-test-options.xml ]] || return
   h2 "Run AWS integration tests"
   pushd $release_src/hadoop-tools/hadoop-aws
   ln -nsf $HOME/.config/aws/{auth-keys.xml,contract-test-options.xml} src/test/resources
-  mvn --quiet verify -Dtest=TestS3A* -Dit.test=ITestS3A*
+  mvn --quiet verify -Dtest=TestS3A* -Dit.test=ITestS3A* || rc=$?
   popd
+  return $rc
 }
 
 source_adls() {
+  local rc
   [[ -e $HOME/.config/adls/auth-keys.xml ]] || return
   h2 "Run ADL live tests"
   pushd $release_src/hadoop-tools/hadoop-azure-datalake
   ln -nsf $HOME/.config/adls/auth-keys.xml src/test/resources
-  mvn --quiet test
+  mvn --quiet test || rc=$?
   popd
+  return $rc
 }
 
 while [[ $# -gt 0 ]]; do
@@ -162,23 +179,8 @@ if [[ -z $release_url ]]; then
   exit
 fi
 
-[[ -n $VREL_DIR ]] && cd $VREL_DIR
-
 release=$(basename $release_url)
 release_bin=$(sed -e 's/-RC.*//' <<< $release)
 release_src=$release_bin-src
 
-steps=${VREL_STEPS:=keys signatures checksums binary_untar binary_sanity source_untar source_build source_sanity source_aws source_adls}
-
-echo "Verification steps:"
-for step in $steps; do
-  echo "  $step"
-done
-echo
-
-log_dir=$PWD/logs/$release
-mkdir -p "$log_dir"
-log_file=$log_dir/$(date +%Y%m%d_%H%M%S).log
-echo "Log file $log_file"
-
-verify_release > >(tee $log_file) 2>&1
+verify_release

@@ -22,12 +22,17 @@ fi
 for mode in $modes; do
   t2 "Starting Hadoop in $mode mode"
   [[ $mode == secure ]] && kinit -kt ~/.config/kerberos/hdfs.keytab hdfs/localhost
-  pseudo_dist restart $top_dir/config/$mode
+  pseudo_dist restart $top_dir/config/$mode || {
+    exit_code=2
+    continue
+  }
   [[ $mode == secure ]] && kinit -kt ~/.config/kerberos/$USER.keytab $USER
 
   t2 "Running Hadoop BATS tests in $mode mode"
-  test_env bats $top_dir/bats
+  test_env bats $top_dir/bats || exit_code=3
 done
 
 t2 "Stopping Hadoop"
 pseudo_dist stop
+
+exit $exit_code

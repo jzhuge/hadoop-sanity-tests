@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+#
+my_name=$(basename ${BASH_SOURCE[0]})
+
+usage() {
+  cat <<EOF
+Verify Hadoop release.
+
+Usage:
+  $my_name $release_url
+
+EOF
+}
+
+error() {
+  echo -e "Error: $@\n" >&2
+}
+
+h1() {
+  echo -e "= $@ ="
+}
+
+h2() {
+  echo -e "== $@ =="
+}
+
+download() {
+  h2 "Download release tarballs"
+  mkdir $release
+  wget --quiet --recursive --no-directories --no-host-directories --no-parent --reject "index.html*" $release_url
+}
+
+keys() {
+  h2 "Import PGP keys"
+  rm -f KEYS
+  wget --quiet https://dist.apache.org/repos/dist/release/hadoop/common/KEYS
+  gpg --quiet --import KEYS
+}
+
+signatures() {
+  h2 "Verify PGP signatures"
+  for asc in *asc; do
+    gz=${asc//.asc/}
+    gpg --quiet --verify $asc $gz
+  done
+}
+
+checksums() {
+  h2 "Verify checksums"
+  for mds in *.mds; do
+    echo "Verify SHA256 checksum in $mds"
+    shasum -a 256 -c <(checksum_from_mds SHA256 $mds)
+    echo "Verify MD5 checksum in $mds"
+    md5sum -c <(checksum_from_mds MD5 $mds)
+  done
+}
+
+binary_untar() {
+  [[ -d $release_bin ]] || {
+    h2 "Untar binary tarball"
+    tar xf $release.tar.gz
+  }
+}
+
+binary_sanity() {
+  h2 "Run sanity tests on binary"
+  pushd $release_bin
+  run_all
+  popd
+}
+
+source_untar() {
+  [[ -d $release_src ]] || {
+    h2 "Untar source tarball"
+    tar xf $release-src.tar.gz
+  }
+}
+
+source_build() {
+  h2 "Build source"
+  pushd $release_src
+  mvn --quiet clean && mvn --quiet install -DskipTests -DskipShade -Dmaven.javadoc.skip -Pnative -Pdist -Dtar
+  popd
+}
+
+source_sanity() {
+  h2 "Run sanity tests on the new build"
+  pushd $release_src
+  run_all
+  popd
+}
+
+source_aws() {
+  [[ -e $HOME/.config/aws/auth-keys.xml ]] || return
+  [[ -e $HOME/.config/aws/contract-test-options.xml ]] || return
+  h2 "Run AWS integration tests"
+  pushd $release_src/hadoop-tools/hadoop-aws
+  ln -nsf $HOME/.config/aws/{auth-keys.xml,contract-test-options.xml} src/test/resources
+  mvn --quiet verify -Dtest=TestS3A* -Dit.test=ITestS3A*
+  popd
+}
+
+source_adls() {
+  [[ -e $HOME/.config/adls/auth-keys.xml ]] || return
+  h2 "Run ADL live tests"
+  pushd $release_src/hadoop-tools/hadoop-azure-datalake
+  ln -nsf $HOME/.config/adls/auth-keys.xml src/test/resources
+  mvn --quiet verify
+  popd
+}
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -h|--help)
+      usage
+      exit
+      ;;
+    -v|--verbose)
+      verbose=yes
+      shift
+      ;;
+    -*)
+      error "Unknown option $1"
+      usage
+      exit 1
+      ;;
+    *)
+      break
+  esac
+done
+
+[[ $verbose == yes ]] && set -x
+set -e
+
+release_url=$1
+release=$(basename $release_url)
+release_bin=$(sed -e 's/-RC.*//' <<< $release)
+release_src=$release_bin-src
+
+steps=${VREL_STEPS:=keys signatures checksums binary_untar binary_sanity source_untar source_build source_sanity source_aws source_adls}
+
+h1 "Verify $release"
+
+[[ -d $release ]] || download
+cd $release
+
+for step in $steps; do
+  $step
+done

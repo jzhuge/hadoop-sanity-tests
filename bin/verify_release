@@ -4,10 +4,17 @@ my_name=$(basename ${BASH_SOURCE[0]})
 
 usage() {
   cat <<EOF
-Verify Hadoop release.
+Verify a Hadoop release.
+
+The current directory is the working directory unless VREL_DIR is specified.
+Logs are saves in "logs" directory in the working directory.
 
 Usage:
-  $my_name $release_url
+  $my_name <release_url>
+
+Environment:
+  VREL_DIR          The workig directory.
+  VREL_STEPS        Verification steps.
 
 EOF
 }
@@ -17,11 +24,27 @@ error() {
 }
 
 h1() {
-  echo -e "= $@ ="
+  echo -e "\n= $@ ="
 }
 
 h2() {
-  echo -e "== $@ =="
+  echo -e "\n== $@ =="
+}
+
+verify_release() {
+  h1 "Verify $release"
+
+  if [[ -d $release ]]; then
+    cd $release
+  else
+    mkdir $release
+    cd $release
+    download
+  fi
+
+  for step in $steps; do
+    $step
+  done
 }
 
 download() {
@@ -105,7 +128,7 @@ source_adls() {
   h2 "Run ADL live tests"
   pushd $release_src/hadoop-tools/hadoop-azure-datalake
   ln -nsf $HOME/.config/adls/auth-keys.xml src/test/resources
-  mvn --quiet verify
+  mvn --quiet test
   popd
 }
 
@@ -133,17 +156,29 @@ done
 set -e
 
 release_url=$1
+
+if [[ -z $release_url ]]; then
+  usage
+  exit
+fi
+
+[[ -n $VREL_DIR ]] && cd $VREL_DIR
+
 release=$(basename $release_url)
 release_bin=$(sed -e 's/-RC.*//' <<< $release)
 release_src=$release_bin-src
 
 steps=${VREL_STEPS:=keys signatures checksums binary_untar binary_sanity source_untar source_build source_sanity source_aws source_adls}
 
-h1 "Verify $release"
-
-[[ -d $release ]] || download
-cd $release
-
+echo "Verification steps:"
 for step in $steps; do
-  $step
+  echo "  $step"
 done
+echo
+
+log_dir=$PWD/logs/$release
+mkdir -p "$log_dir"
+log_file=$log_dir/$(date +%Y%m%d_%H%M%S).log
+echo "Log file $log_file"
+
+verify_release > >(tee $log_file) 2>&1

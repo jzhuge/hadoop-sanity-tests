@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+#
+my_name=$(basename ${BASH_SOURCE[0]})
+
+usage() {
+  cat <<EOF
+Build a checksum file based on the MDS file
+
+Usage:
+  $my_name <algorithm> <mds_file>
+
+EOF
+}
+
+error() {
+  echo -e "Error: $@\n" >&2
+}
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -h|--help)
+      usage
+      exit
+      ;;
+    -v|--verbose)
+      verbose=yes
+      shift
+      ;;
+    -*)
+      error "Unknown option $1"
+      usage
+      exit 1
+      ;;
+    *)
+      break
+  esac
+done
+
+algorithm=$1
+mds_file=$2
+
+if [[ -z $algorithm ]]; then
+  error "Please specify a checksum algorithm"
+  usage
+  exit
+fi
+
+if [[ -z $mds_file ]]; then
+  error "Please specify an MDS file"
+  usage
+  exit
+fi
+
+[[ $verbose == yes ]] && set -x
+set -e
+
+pattern=": *$algorithm ="
+
+one_line=$(sed -ne "/$pattern/,/^ /p" < $mds_file | paste -d" " - -)
+tarball=$(sed -e "s/$pattern.*//" <<< $one_line)
+checksum=$(sed -e "s/.*$pattern//" <<< $one_line | sed -e 's/ //g')
+
+echo "$checksum  $tarball"

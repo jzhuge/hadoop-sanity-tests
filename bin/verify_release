@@ -7,7 +7,7 @@ usage() {
 Verify a Hadoop release.
 
 Usage:
-  $my_name <release_url>
+  $my_name <release> <release_url>
 
 Environment:
   VREL_STEPS        Verification steps.
@@ -56,7 +56,7 @@ source_adls"
   done
 
   if [[ -n $failed_steps ]]; then
-    echo "Failed steps:$failed_steps"
+    echo -e "\nFailed steps:$failed_steps\n" >&2
     return 2
   fi
 }
@@ -169,17 +169,17 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-[[ $verbose == yes ]] && set -x
-set -e
+release=$1
+release_url=$2
 
-release_url=$1
-
-if [[ -z $release_url ]]; then
+if [[ -z $release || -z $release_url ]]; then
   usage
   exit
 fi
 
-release=$(basename $release_url)
+[[ $verbose == yes ]] && set -x
+set -e
+
 release_bin=$(sed -e 's/-RC.*//' <<< $release)
 release_src=$release_bin-src
 

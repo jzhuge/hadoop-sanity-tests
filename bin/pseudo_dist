@@ -9,7 +9,7 @@ export HADOOP_KEYSTORE_PASSWORD=${HADOOP_KEYSTORE_PASSWORD:-password}
 export HADOOP_LOGLEVEL=${HADOOP_LOGLEVEL:-WARN}
 
 : ${TEST_HADOOP_DFS_DIR:=/tmp/hadoop-$USER/dfs}
-: ${TEST_SERVICES:=hdfs distcp balancer httpfs kms}
+: ${TEST_SERVICES:=hdfs yarn balancer httpfs kms}
 : ${TEST_SILENT:=true}
 
 if [[ $TEST_SILENT = false ]]; then
@@ -50,12 +50,11 @@ pseudo_dist_mode() {
       hdfs)
         start_hdfs=yes
         ;;
-      distcp|yarn)
+      yarn)
         start_yarn=yes
         ;;
       balancer)
         start_hdfs=yes
-        start_yarn=yes
         start_balancer=yes
         ;;
       httpfs)

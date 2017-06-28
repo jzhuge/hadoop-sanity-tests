@@ -100,7 +100,7 @@ binary_sanity() {
   h2 "Run sanity tests for the binary package"
   [[ -d $release_bin ]] || tar xf $release.tar.gz
   pushd $release_bin
-  run_all || rc=$?
+  hadoop-sanity-tests || rc=$?
   popd
   return $rc
 }
@@ -121,7 +121,7 @@ source_sanity() {
   local rc
   h2 "Run sanity tests for the source package"
   pushd $release_src
-  run_all || rc=$?
+  hadoop-sanity-tests || rc=$?
   popd
   return $rc
 }

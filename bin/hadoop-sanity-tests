@@ -29,7 +29,13 @@ for mode in $modes; do
   [[ $mode == secure ]] && kinit -kt ~/.config/kerberos/$USER.keytab $USER
 
   t2 "Running Hadoop BATS tests in $mode mode"
-  test_env bats $top_dir/bats || exit_code=3
+  if [[ -z $TEST_SERVICES ]]; then
+    test_env bats $top_dir/bats || exit_code=3
+  else
+    for svc in $TEST_SERVICES; do
+      test_env bats $top_dir/bats/{$svc.bats,$svc-*} || exit_code=3
+    done
+  fi
 done
 
 t2 "Stopping Hadoop"

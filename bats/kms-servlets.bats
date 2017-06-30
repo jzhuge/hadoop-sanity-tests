@@ -2,7 +2,8 @@ load test_helper
 load test_servlet
 
 @test "kms servlet /kms/jmx" {
-  (( HADOOP_VERSION_MAJOR == 2 )) || skip "Only Hadoop 2 KMS supports servlet /kms/jmx"
+# HADOOP-14608 added servlet /kms/jmx to Hadoop 3
+#  (( HADOOP_VERSION_MAJOR == 2 )) || skip "Only Hadoop 2 KMS supports servlet /kms/jmx"
   test_servlet kms/jmx $TEST_HTTP_SCHEME $TEST_KMS_HOST $TEST_KMS_PORT
 }
 

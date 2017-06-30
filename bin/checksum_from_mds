@@ -54,10 +54,10 @@ fi
 [[ $verbose == yes ]] && set -x
 set -e
 
-pattern=": *$algorithm ="
+pattern="\\<$algorithm ="
 
-one_line=$(sed -ne "/$pattern/,/^ /p" < $mds_file | paste -d" " - -)
-tarball=$(sed -e "s/$pattern.*//" <<< $one_line)
+one_line=$(sed -ne "/$pattern/,\$p" < $mds_file | sed -e '/^\//,$d' | paste -d" " - -)
 checksum=$(sed -e "s/.*$pattern//" <<< $one_line | sed -e 's/ //g')
+tarball=$(sed -e "s/\.mds//" <<< $mds_file)
 
 echo "$checksum  $tarball"

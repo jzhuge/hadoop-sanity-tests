@@ -16,6 +16,20 @@ init_envs() {
     : ${TEST_HTTPFS_SCHEME:=webhdfs}
     : ${TEST_NN_WEB_PORT:=9870}
   fi
+
+  if [[ -z $HADOOP_VERSION_MAJOR ]]; then
+    if [[ -z $HADOOP_VERSION ]]; then
+      export HADOOP_VERSION=$(hadoop version | sed -ne 's/^Hadoop \(.*\)/\1/p')
+    fi
+
+    local m='^([0-9]*)\.([0-9]*)\.([0-9]*)-?(.*)$'
+    if [[ $HADOOP_VERSION =~ $m ]]; then
+      export HADOOP_VERSION_MAJOR=${BASH_REMATCH[1]}
+      export HADOOP_VERSION_MINOR=${BASH_REMATCH[2]}
+      export HADOOP_VERSION_MAINTENANCE=${BASH_REMATCH[3]}
+      export HADOOP_VERSION_SUFFIX=${BASH_REMATCH[4]}
+    fi
+  fi
 }
 
 setup() {

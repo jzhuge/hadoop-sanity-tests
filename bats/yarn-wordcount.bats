@@ -1,6 +1,7 @@
 load test_helper
 
 @test "wordcount" {
+  [[ $TEST_KERBEROS_ENABLED == yes ]] && skip "Known issue with Kerberos"
   local cnt=200
   local file=/tmp/$cnt-words
   hdfs dfs -rm -f -r -skipTrash $file

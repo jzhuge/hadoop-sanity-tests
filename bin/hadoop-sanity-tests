@@ -3,7 +3,8 @@
 my_path=$(readlink -f "${BASH_SOURCE[0]}")
 top_dir=$(readlink -f $(dirname "$my_path")/..)
 
-modes=${TEST_MODES:-insecure ssl secure}
+modes=${TEST_MODES:-insecure ssl}
+[[ $TEST_SECURE_MODE == yes ]] && modes+=" secure"
 
 PATH=$top_dir/bin:$PATH
 
@@ -18,6 +19,8 @@ if [[ -z $HADOOP_HOME ]]; then
     exit 1
   fi
 fi
+
+set -e
 
 for mode in $modes; do
   t2 "Starting Hadoop in $mode mode"

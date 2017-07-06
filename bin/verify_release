@@ -110,9 +110,8 @@ source_build() {
   h2 "Build source"
   [[ -d $release_src ]] || tar xf $release-src.tar.gz
   pushd $release_src
-  mvn --quiet clean &&
-    mvn --quiet install -DskipTests -DskipShade -Dmaven.javadoc.skip -Pnative -Pdist -Dtar ||
-    rc=$?
+  mvn --quiet --update-snapshots clean install -DskipTests -DskipShade \
+    -Dmaven.javadoc.skip -Pnative -Pdist -Dtar || rc=$?
   popd
   return $rc
 }

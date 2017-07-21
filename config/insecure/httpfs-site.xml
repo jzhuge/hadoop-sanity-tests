@@ -15,12 +15,7 @@
 <configuration>
 
   <property>
-    <name>hadoop.httpfs.ssl.enabled</name>
-    <value>false</value>
-  </property>
-
-  <property>
-    <name>hadoop.httpfs.http.administrators</name>
+    <name>httpfs.http.administrators</name>
     <value>${user.name}</value>
   </property>
 

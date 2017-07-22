@@ -10,6 +10,8 @@ fi
 
 PATH="$HADOOP_HOME/bin":$PATH
 
+export HADOOP_CLASSPATH="$HADOOP_HOME/share/hadoop/tools/lib/"'*'
+
 test_env="$HADOOP_HOME/etc/hadoop/test_env"
 if [[ -r "$test_env" ]]; then
   . $test_env

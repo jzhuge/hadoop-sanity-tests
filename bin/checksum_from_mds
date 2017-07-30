@@ -56,8 +56,7 @@ set -e
 
 pattern="\\<$algorithm ="
 
-one_line=$(sed -ne "/$pattern/,\$p" < $mds_file | sed -e '/^\//,$d' | paste -d" " - -)
-checksum=$(sed -e "s/.*$pattern//" <<< $one_line | sed -e 's/ //g')
+checksum=$(sed -ne "/$pattern/,/^[^ ]/{ /$pattern/p; /^ /p; }" < $mds_file | paste -s -d" " - - | sed -e 's/ //g' -e 's/.*=//')
 tarball=$(sed -e "s/\.mds//" <<< $mds_file)
 
 echo "$checksum  $tarball"

@@ -128,10 +128,9 @@ source_sanity() {
 source_aws() {
   local rc
   [[ -e $HOME/.config/aws/auth-keys.xml ]] || return
-  [[ -e $HOME/.config/aws/contract-test-options.xml ]] || return
   h2 "Run AWS integration tests"
   pushd $release_src/hadoop-tools/hadoop-aws
-  ln -nsf $HOME/.config/aws/{auth-keys.xml,contract-test-options.xml} src/test/resources
+  ln -nsf $HOME/.config/aws/auth-keys.xml src/test/resources
   mvn --quiet verify -Dtest=TestS3A* -Dit.test=ITestS3A* || rc=$?
   popd
   return $rc

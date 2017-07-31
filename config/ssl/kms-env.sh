@@ -47,6 +47,8 @@ export KMS_SSL_KEYSTORE_FILE=${HOME}/.config/ssl/keystore
 #
 export KMS_SSL_KEYSTORE_PASS="<a:bc=def?>"
 
+# Hadooop 2.7 can't handle XML special characters in KMS_SSL_KEYSTORE_PASS
+# export KMS_SSL_KEYSTORE_PASS=$(sed 's/&/\&amp;/g; s/</\\\&lt;/g; s/>/\\\&gt;/g; s/"/\&quot;/g; s/'"'"'/\&#39;/g' <<< $KMS_SSL_KEYSTORE_PASS)
 
 ##
 ## Tomcat specific settings

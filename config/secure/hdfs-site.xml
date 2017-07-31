@@ -128,7 +128,7 @@
 
   <property>
     <name>dfs.web.authentication.kerberos.principal</name>
-    <value>hdfs/localhost@GCE.CLOUDERA.COM</value>
+    <value>HTTP/localhost@GCE.CLOUDERA.COM</value>
   </property>
 
   <property>

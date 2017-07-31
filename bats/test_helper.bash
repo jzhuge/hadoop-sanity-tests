@@ -9,11 +9,11 @@ init_envs() {
 
   if [[ $TEST_SSL_ENABLED == yes ]]; then
     : ${TEST_HTTP_SCHEME:=https}
-    : ${TEST_HTTPFS_SCHEME:=swebhdfs}
+    : ${TEST_WEBHDFS_SCHEME:=swebhdfs}
     : ${TEST_NN_WEB_PORT:=9871}
   else
     : ${TEST_HTTP_SCHEME:=http}
-    : ${TEST_HTTPFS_SCHEME:=webhdfs}
+    : ${TEST_WEBHDFS_SCHEME:=webhdfs}
     : ${TEST_NN_WEB_PORT:=9870}
   fi
 

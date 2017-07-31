@@ -4,7 +4,8 @@ my_path=$(readlink -f "${BASH_SOURCE[0]}")
 top_dir=$(readlink -f $(dirname "$my_path")/..)
 
 modes=${TEST_MODES:-insecure ssl}
-[[ $TEST_SECURE_MODE == yes ]] && modes+=" secure"
+re='[[:<:]]secure[[:>:]]'
+[[ $TEST_SECURE_MODE == yes && ! $TEST_MODES =~ $re ]] && modes+=" secure"
 
 PATH=$top_dir/bin:$PATH
 

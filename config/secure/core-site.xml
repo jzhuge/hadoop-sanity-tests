@@ -74,4 +74,24 @@
     <value>*</value>
   </property>
 
+  <property>
+    <name>hadoop.http.authentication.type</name>
+    <value>kerberos</value>
+  </property>
+
+  <property>
+    <name>hadoop.http.authentication.kerberos.principal</name>
+    <value>HTTP/localhost@GCE.CLOUDERA.COM</value>
+  </property>
+
+  <property>
+    <name>hadoop.http.authentication.kerberos.keytab</name>
+    <value>${user.home}/.config/kerberos/http.keytab</value>
+  </property>
+
+  <property>
+    <name>hadoop.http.filter.initializers</name>
+    <value>org.apache.hadoop.security.AuthenticationFilterInitializer</value>
+  </property>
+
 </configuration>

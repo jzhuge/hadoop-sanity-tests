@@ -13,6 +13,7 @@ realm=${3:-$KERBEROS_REALM}
 user_principal=$USER@$realm
 user_keytab=$USER.keytab
 http_principal=HTTP/$fq_hostname@$realm
+http_keytab=http.keytab
 kms_keytab=kms.keytab
 hdfs_principal=hdfs/$fq_hostname@$realm
 hdfs_keytab=hdfs.keytab
@@ -32,6 +33,7 @@ addprinc -randkey $user_principal
 ktadd -norandkey -k $remote_keytabs_dir/$user_keytab $user_principal
 
 addprinc -randkey $http_principal
+ktadd -norandkey -k $remote_keytabs_dir/$http_keytab $http_principal
 ktadd -norandkey -k $remote_keytabs_dir/$kms_keytab $http_principal
 
 addprinc -randkey $httpfs_principal

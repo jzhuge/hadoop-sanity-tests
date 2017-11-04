@@ -46,7 +46,6 @@
   <property>
     <name>hadoop.security.auth_to_local</name>
     <value>
-      RULE:[2:$1@$0](httpfs/.*@.*REALM.TLD)s/.*/httpfs/
       DEFAULT
     </value>
   </property>

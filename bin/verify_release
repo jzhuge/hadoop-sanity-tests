@@ -75,7 +75,8 @@ signatures() {
     gpg --quiet --import KEYS
 
   h2 "Verify PGP signatures"
-  for asc in *asc; do
+  for asc in ${release}*.asc; do
+    echo "Verify PGP signature in $asc"
     gz=${asc//.asc/}
     gpg --quiet --verify $asc $gz || rc=1
   done
@@ -86,7 +87,7 @@ signatures() {
 checksums() {
   local rc
   h2 "Verify checksums"
-  for mds in *.mds; do
+  for mds in ${release}*.mds; do
     echo "Verify SHA256 checksum in $mds"
     shasum -a 256 -c <(checksum_from_mds SHA256 $mds) || rc=1
     echo "Verify MD5 checksum in $mds"

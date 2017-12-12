@@ -59,4 +59,7 @@ pattern="\\<$algorithm ="
 checksum=$(sed -ne "/$pattern/,/^[^ ]/{ /$pattern/p; /^ /p; }" < $mds_file | paste -s -d" " - - | sed -e 's/ //g' -e 's/.*=//')
 tarball=$(sed -e "s/\.mds//" <<< $mds_file)
 
+# MD5 checksum should always be lower case
+checksum=$(tr '[:upper:]' '[:lower:]' <<<$checksum)
+
 echo "$checksum  $tarball"

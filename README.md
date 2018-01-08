@@ -2,11 +2,13 @@
 
 ## Preparation
 
-### Build the Hadoop source tree
+* Build the Hadoop source tree
 
-    mvn install -Pdist -Dtar -DskipTests -DskipShade -Dmaven.javadoc.skip
+      mvn install -Pdist -Dtar -DskipTests -DskipShade -Dmaven.javadoc.skip
 
-### Add _hadoop-sanity-tests/bin_ directory to your PATH
+* Add `hadoop-sanity-tests/bin` directory to your PATH
+* Replace `jzhuge` with your username in config files
+* Replace `GCE.CLOUDERA.COM` with your Kerberos realm
 
 ## Run Hadoop sanity tests
 
@@ -45,10 +47,10 @@ Set TEST_SERVICES to select which services to test.
 
 ## Environment variables
 
-Name             | Description
------------------|-------------
-HADOOP_HOME      | Hadoop home directory
-HADOOP_CONF_DIR  | Hadoop config directory
-TEST_MODES       | Space delimited list of test modes: insecure, ssl, and secure
-TEST_SECURE_MODE | Set it to `yes` to test secure mode as well
-TEST_SERVICES    | Space delimited list of Hadoop services: hdfs, yarn, balancer, httpfs, and kms
+Name             | Default      | Description
+-----------------|--------------|-------------
+HADOOP_HOME      | (auto)       | Hadoop home directory
+HADOOP_CONF_DIR  | (auto)       | Hadoop config directory
+TEST_MODES       | insecure ssl | Space delimited list of test modes: insecure, ssl, and secure
+TEST_SECURE_MODE | (none)       | Set it to `yes` to test secure mode as well
+TEST_SERVICES    | hdfs yarn balancer httpfs kms | Space delimited list of Hadoop services: hdfs, yarn, balancer, httpfs, and kms

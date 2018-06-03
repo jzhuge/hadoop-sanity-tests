@@ -80,7 +80,7 @@
 
   <property>
     <name>hadoop.http.authentication.kerberos.principal</name>
-    <value>HTTP/localhost@GCE.CLOUDERA.COM</value>
+    <value>HTTP/localhost@HADOOP.LOCAL</value>
   </property>
 
   <property>

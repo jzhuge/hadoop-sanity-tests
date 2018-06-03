@@ -16,12 +16,12 @@
 
   <property>
     <name>yarn.resourcemanager.principal</name>
-    <value>yarn/localhost@GCE.CLOUDERA.COM</value>
+    <value>yarn/localhost@HADOOP.LOCAL</value>
   </property>
 
   <property>
     <name>yarn.resourcemanager.webapp.spnego-principal</name>
-    <value>HTTP/localhost@GCE.CLOUDERA.COM</value>
+    <value>HTTP/localhost@HADOOP.LOCAL</value>
   </property>
 
   <property>

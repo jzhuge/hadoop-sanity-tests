@@ -78,7 +78,7 @@
 
   <property>
     <name>dfs.namenode.kerberos.principal</name>
-    <value>hdfs/localhost@GCE.CLOUDERA.COM</value>
+    <value>hdfs/localhost@HADOOP.LOCAL</value>
   </property>
 
   <property>
@@ -88,7 +88,7 @@
 
   <property>
     <name>dfs.secondary.namenode.kerberos.principal</name>
-    <value>hdfs/localhost@GCE.CLOUDERA.COM</value>
+    <value>hdfs/localhost@HADOOP.LOCAL</value>
   </property>
 
   <property>
@@ -118,7 +118,7 @@
 
   <property>
     <name>dfs.datanode.kerberos.principal</name>
-    <value>hdfs/localhost@GCE.CLOUDERA.COM</value>
+    <value>hdfs/localhost@HADOOP.LOCAL</value>
   </property>
 
   <property>
@@ -128,7 +128,7 @@
 
   <property>
     <name>dfs.web.authentication.kerberos.principal</name>
-    <value>HTTP/localhost@GCE.CLOUDERA.COM</value>
+    <value>HTTP/localhost@HADOOP.LOCAL</value>
   </property>
 
   <property>
